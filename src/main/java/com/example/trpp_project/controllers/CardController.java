@@ -20,9 +20,8 @@ public class CardController {
 
 
     @GetMapping("/{id}")
-    public int getCard(@PathVariable("id") int id){
-
-        return cardDao.getCard(id).getId();
+    public Card getCard(@PathVariable("id") int id){
+        return cardDao.getCard(id);
     }
 
     @PutMapping("/{id}")
