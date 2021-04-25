@@ -18,12 +18,17 @@ import java.util.List;
 @Data
 public class User {
     @Id
-    int id;
+    private int id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "password")
     private String password;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    private List<Card> cards;
+
+
 
 }

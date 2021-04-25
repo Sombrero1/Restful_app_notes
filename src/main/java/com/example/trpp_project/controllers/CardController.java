@@ -1,7 +1,12 @@
 package com.example.trpp_project.controllers;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.example.trpp_project.config.Const;
 import com.example.trpp_project.dao.CardDao;
 import com.example.trpp_project.models.Card;
+import com.example.trpp_project.models.User;
+import com.example.trpp_project.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,13 +14,19 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static com.example.trpp_project.config.Const.TOKEN_PREFIX;
 
 @RestController
 @RequestMapping("/cards")
 public class CardController {
     @Autowired
     CardDao cardDao;
+
+    @Autowired
+    UserRepository userRepository;
 
 
 
@@ -40,12 +51,28 @@ public class CardController {
 
 
     @GetMapping()
-    public ArrayList<Card> getCards(){
+    public ArrayList<Card> getCards(@RequestHeader("Authorization") String token){
+        String user = JWT.require(Algorithm.HMAC256(Const.SECRET.getBytes()))
+                .build()
+                .verify(token.replace(TOKEN_PREFIX,""))
+                .getSubject();
+        System.out.println(user);
+        System.out.println(userRepository.findByUsername(user).getCards());
         return cardDao.getCards();
     }
 
     @PostMapping()
-    public int createCard(@Validated @RequestBody() Card card){
+    public int createCard(@Validated @RequestBody() Card card, @RequestHeader("Authorization") String token){
+        String user = JWT.require(Algorithm.HMAC256(Const.SECRET.getBytes()))
+                .build()
+                .verify(token.replace(TOKEN_PREFIX,""))
+                .getSubject();
+        User user1 =  userRepository.findByUsername(user);
+
+        user1.getCards().add(card);
+
+        userRepository.save(user1);
+
         return cardDao.addCard(card).getId();
     }
 
@@ -54,8 +81,8 @@ public class CardController {
         return cardDao.getNewCards(timestamp);
     }
 
-    public String getCurrentUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getName();
-    }
+//    public String getCurrentUsername() {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        return auth.getName();
+//    }
 }

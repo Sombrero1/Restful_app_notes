@@ -7,8 +7,10 @@ import com.example.trpp_project.security.JWTAuthorizationFilter;
 
 import com.example.trpp_project.services.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -24,18 +26,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     private final UserServiceImpl userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    private static final String ADMIN_ENDPOINT = "/api/v1/admin/**";
-    private static final String LOGIN_ENDPOINT = "/login**";
 
     @Autowired
     public SecurityConfig(UserServiceImpl userService) {
         this.userService = userService;
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
+
+
+
+
+
 
 
 

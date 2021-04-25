@@ -6,22 +6,36 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.lang.NonNull;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Min;
 
+@Entity
+@Table(name = "cards")
 public class Card {
+
+    @Id
     int id;
+
     @NotEmpty
     String name;
+
     @Min(1)
     int numberOfList;
+
     @Min(1)
     int pos;
+
 
     @JsonIgnore
     long timestamp;
 
-    public Card(int id, String name,  int numberOfList, int pos) {
+    public Card() {
+    }
+
+    public Card(int id, String name, int numberOfList, int pos) {
         this.id = id;
         this.name = name;
         this.pos = pos;

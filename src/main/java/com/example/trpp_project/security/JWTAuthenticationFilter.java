@@ -2,9 +2,8 @@ package com.example.trpp_project.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.trpp_project.config.Const;
 import com.example.trpp_project.models.User;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,12 +19,18 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 
+
 public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
     private AuthenticationManager authenticationManager;
-    private long duration = 86_400_000; //1 день
-    private String secret = "test";
-    private String HEADER_STRING = "Authorization";
-    private String TOKEN_PREFIX = "Bearer ";
+
+    private long DURATION = Const.DURATION; //1 день
+    private String SECRET = Const.SECRET;
+    private String HEADER_STRING = Const.HEADER_STRING;
+    private String TOKEN_PREFIX = Const.TOKEN_PREFIX;
+
+
+
 
     public JWTAuthenticationFilter(AuthenticationManager authenticationManager){
         this.authenticationManager = authenticationManager;
@@ -57,8 +62,8 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String token = JWT.create()
                 .withSubject(((org.springframework.security.core.userdetails.User) authResult.getPrincipal()).getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + duration))
-                .sign(Algorithm.HMAC256(secret.getBytes()));
+                .withExpiresAt(new Date(System.currentTimeMillis() + DURATION))
+                .sign(Algorithm.HMAC256(SECRET.getBytes()));
         response.addHeader(HEADER_STRING,TOKEN_PREFIX + token);
     }
 }
