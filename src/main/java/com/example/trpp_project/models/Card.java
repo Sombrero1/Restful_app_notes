@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.lang.NonNull;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Min;
 
@@ -17,38 +15,38 @@ import javax.validation.constraints.Min;
 public class Card {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     int id;
 
     @NotEmpty
-    String name;
+    private String name;
 
     @Min(1)
-    int numberOfList;
+    private int numberOfList;
 
     @Min(1)
-    int pos;
-
+    private int pos;
 
     @JsonIgnore
-    long timestamp;
+    private long timestamp;
 
     public Card() {
     }
 
-    public Card(int id, String name, int numberOfList, int pos) {
-        this.id = id;
+    public Card( String name, int numberOfList, int pos) {
         this.name = name;
         this.pos = pos;
         this.numberOfList = numberOfList;
     }
+    @JsonView(Views.get.class)
     public int getId() {
         return id;
     }
 
-    @JsonView(Views.get.class)
-    public void setId(int id) {
-        this.id = id;
-    }
+//    @JsonView(Views.get.class)
+//    public void setId(int id) {
+//        this.id = id;
+//    }
 
     @JsonView(Views.get.class)
     public String getName() {

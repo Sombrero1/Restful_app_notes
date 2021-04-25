@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",uniqueConstraints={@UniqueConstraint(columnNames={"username"})})
 @Data
 public class User {
     @Id
@@ -26,7 +26,7 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade={CascadeType.PERSIST,CascadeType.REMOVE})
+    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private List<Card> cards;
 
 

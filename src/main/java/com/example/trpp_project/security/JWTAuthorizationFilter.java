@@ -2,6 +2,7 @@ package com.example.trpp_project.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.example.trpp_project.config.Const;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -41,10 +42,16 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private UsernamePasswordAuthenticationToken getAuthentication(HttpServletRequest request){
         String token = request.getHeader(HEADER_STRING);
         if (token != null){
-            String user = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
-                    .build()
-                    .verify(token.replace(TOKEN_PREFIX,""))
-                    .getSubject();
+            String user;
+            try{
+                user = JWT.require(Algorithm.HMAC256(SECRET.getBytes()))
+                        .build()
+                        .verify(token.replace(TOKEN_PREFIX,""))
+                        .getSubject();
+            }
+            catch (JWTDecodeException e){
+                return null;
+            }
             if (user != null)
                 return new UsernamePasswordAuthenticationToken(user,null, Collections.emptyList());
         }
