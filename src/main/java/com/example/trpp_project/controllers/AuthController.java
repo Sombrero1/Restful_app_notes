@@ -3,6 +3,7 @@ package com.example.trpp_project.controllers;
 import com.example.trpp_project.dto.AuthenticationRequestDto;
 import com.example.trpp_project.models.User;
 import com.example.trpp_project.repo.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,11 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
+@Slf4j
 public class AuthController {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Bean
     BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -29,6 +31,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public String sign_up(@Validated @RequestBody AuthenticationRequestDto authenticationRequestDto){
+
+        log.info("try sign up with username",authenticationRequestDto.getUsername());
+
         if (userRepository.findByUsername(authenticationRequestDto.getUsername())!= null){
             throw new ResponseStatusException(//ВЫПОЛНИТЬ ПРОВЕРКУ
                     HttpStatus.UNAUTHORIZED, "the username is already in use"
@@ -41,6 +46,6 @@ public class AuthController {
         userRepository.save(user);
 
 
-        return "OK";
+        return "redirect:/login";
     }
 }

@@ -19,7 +19,7 @@ public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    int id;
+    private long id;
 
     @NotEmpty
     private String name;
@@ -46,7 +46,7 @@ public class Card {
         this.numberOfList = numberOfList;
     }
     @JsonView(Views.get.class)
-    public int getId() {
+    public long getId() {
         return id;
     }
 
