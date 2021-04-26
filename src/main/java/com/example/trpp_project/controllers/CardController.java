@@ -66,8 +66,8 @@ public class CardController {
         if (card.getName()!=null) editCard.setName(card.getName());
         if (card.getPos()>0) editCard.setPos(card.getPos());
         if (card.getNumberOfList()>0) editCard.setNumberOfList(card.getNumberOfList());
-        card.setTimestamp(new Date().getTime());
-        card.setStatus(Status.CHANGED);
+        editCard.setTimestamp(new Date().getTime());
+        editCard.setStatus(Status.CHANGED);
         userRepository.save(user);
 
         return editCard.getId();
