@@ -14,10 +14,12 @@ import java.util.List;
  */
 
 @Entity
-@Table(name = "users",uniqueConstraints={@UniqueConstraint(columnNames={"username"})})
+//@Table(name = "users",uniqueConstraints={@UniqueConstraint(columnNames={"username"})})
+@Table(name = "users")
 @Data
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
     @Column(name = "username", unique = true)

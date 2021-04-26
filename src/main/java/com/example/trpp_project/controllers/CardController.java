@@ -4,19 +4,15 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.trpp_project.config.Const;
 import com.example.trpp_project.models.Card;
+import com.example.trpp_project.models.Status;
 import com.example.trpp_project.models.User;
-import com.example.trpp_project.repo.CardRepository;
 import com.example.trpp_project.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,26 +56,36 @@ public class CardController {
 
         Card editCard = user.getCards().stream().filter(x -> (x.getId() == id)).findAny().orElse(null);
 
-        if (editCard == null) throw new ResponseStatusException(
+        if (editCard == null || editCard.getStatus() == Status.DELETED) throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, "entity not found"
         );
 
-        if (card.getName()!="") editCard.setName(card.getName());
-        if (card.getPos()!=0) editCard.setPos(card.getPos());
-        if (card.getNumberOfList()!=0) editCard.setNumberOfList(card.getNumberOfList());
+        if (card.getName()!=null) editCard.setName(card.getName());
+        if (card.getPos()>0) editCard.setPos(card.getPos());
+        if (card.getNumberOfList()>0) editCard.setNumberOfList(card.getNumberOfList());
         card.setTimestamp(new Date().getTime());
+        card.setStatus(Status.CHANGED);
+        userRepository.save(user);
 
         return editCard.getId();
     }
 
-//    @DeleteMapping("/{id}") //подумать про удаление - как оповестить пользователя
-//    public Card deleteCard(@PathVariable("id") int id){
-//        Card card = cardDao.getCard(id);
-//        if (card.getId() == -1) throw new ResponseStatusException(
-//                HttpStatus.NOT_FOUND, "entity not found"
-//        );
-//        return card;
-//    }
+    @DeleteMapping("/{id}")
+    public String deleteCard(@PathVariable("id") int id, @RequestHeader("Authorization") String token){
+        String username = getUsernameFromJWTToken(token);
+        User user =  userRepository.findByUsername(username);
+
+        Card editCard = user.getCards().stream().filter(x -> (x.getId() == id)).findAny().orElse(null);
+        if (editCard == null || editCard.getStatus() == Status.DELETED) throw new ResponseStatusException(//ВЫПОЛНИТЬ ПРОВЕРКУ
+                HttpStatus.NOT_FOUND, "entity not found"
+        );
+
+        editCard.setStatus(Status.DELETED);
+        editCard.setTimestamp(new Date().getTime());
+        userRepository.save(user);
+
+        return "DELETED";
+    }
 
 
     @GetMapping()
@@ -106,6 +112,8 @@ public class CardController {
         User user =  userRepository.findByUsername(username);
         return user.getCards().stream().filter(x-> (x.getTimestamp()>timestamp)).collect(Collectors.toList());
     }
+
+
 
 //    public String getCurrentUsername() {
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();

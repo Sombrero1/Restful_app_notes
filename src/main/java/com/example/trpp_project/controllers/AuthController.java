@@ -38,6 +38,7 @@ public class AuthController {
         User user = new User();
         user.setUsername(authenticationRequestDto.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(authenticationRequestDto.getPassword()));
+        userRepository.save(user);
 
 
         return "OK";

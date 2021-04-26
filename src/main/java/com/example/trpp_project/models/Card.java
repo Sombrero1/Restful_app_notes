@@ -4,6 +4,9 @@ import com.example.trpp_project.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Builder;
+import lombok.Getter;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
@@ -26,6 +29,10 @@ public class Card {
 
     @Min(1)
     private int pos;
+
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.CREATED;
+
 
     @JsonIgnore
     private long timestamp;
@@ -81,4 +88,26 @@ public class Card {
     public void setNumberOfList(int numberOfList) {
         this.numberOfList = numberOfList;
     }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", numberOfList=" + numberOfList +
+                ", pos=" + pos +
+                ", timestamp=" + timestamp +
+                '}';
+    }
+
+
+
 }

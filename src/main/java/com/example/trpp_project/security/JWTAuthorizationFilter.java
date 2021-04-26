@@ -3,6 +3,7 @@ package com.example.trpp_project.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.example.trpp_project.config.Const;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,7 +50,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                         .verify(token.replace(TOKEN_PREFIX,""))
                         .getSubject();
             }
-            catch (JWTDecodeException e){
+            catch (JWTDecodeException | TokenExpiredException e){
                 return null;
             }
             if (user != null)
