@@ -31,7 +31,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public String sign_up(@Validated @RequestBody AuthenticationRequestDto authenticationRequestDto){
-
         log.info("try sign up with username",authenticationRequestDto.getUsername());
 
         if (userRepository.findByUsername(authenticationRequestDto.getUsername())!= null){
@@ -46,6 +45,6 @@ public class AuthController {
         userRepository.save(user);
 
 
-        return "redirect:/login";
+        return "OK";
     }
 }
