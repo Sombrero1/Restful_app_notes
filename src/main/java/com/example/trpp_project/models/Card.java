@@ -19,6 +19,7 @@ public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+
     private long id;
 
     @NotEmpty

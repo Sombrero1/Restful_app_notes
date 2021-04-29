@@ -70,6 +70,7 @@ public class CardController {
         editCard.setStatus(Status.CHANGED);
         userRepository.save(user);
 
+
         return editCard.getId();
     }
 
@@ -96,12 +97,13 @@ public class CardController {
         String username = getUsernameFromJWTToken(token);
         User user =  userRepository.findByUsername(username);
         log.info("try get cards by username {}",username);
-        return user.getCards();
+        return user.getCards().stream().filter(x-> (x.getStatus()!=Status.DELETED)).collect(Collectors.toList());
     }
 
     @PostMapping()
     public long createCard(@Validated @RequestBody() Card card, @RequestHeader("Authorization") String token){
         card.setTimestamp(new Date().getTime());
+
 
         String username = getUsernameFromJWTToken(token);
         User user =  userRepository.findByUsername(username);
@@ -118,6 +120,7 @@ public class CardController {
         String username = getUsernameFromJWTToken(token);
         User user =  userRepository.findByUsername(username);
         log.info("try sinch by username {} timestamp: {}",username, timestamp);
+        log.info("{}",user.getCards().stream().filter(x-> (x.getTimestamp()>timestamp)).collect(Collectors.toList()));
         return user.getCards().stream().filter(x-> (x.getTimestamp()>timestamp)).collect(Collectors.toList());
     }
 

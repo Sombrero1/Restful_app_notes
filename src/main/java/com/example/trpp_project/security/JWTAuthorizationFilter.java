@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-
+@Slf4j
 public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     private String SECRET = Const.SECRET;
     private String HEADER_STRING = Const.HEADER_STRING;
@@ -30,6 +30,7 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String header = request.getHeader(HEADER_STRING);
+        log.info("query with header : {}",header);
 
         if (header == null || !header.startsWith(TOKEN_PREFIX)){
             chain.doFilter(request,response);

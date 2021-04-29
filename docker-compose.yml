@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:  
+  web:
+    # Берем Dockerfile из каталога app
+    build: ./target
+    image: trello_java_back
+    # Запускаем тестовый сервер
+    restart: always
+    
+    #command: python manage.py runserver 0.0.0.0:8080
+    # куда будут помещены данные из каталога app
+    # Открываем порт 8000 внутри и снаружи
+
+    #volumes:
+    #    - ./djangoProject/:/usr/src/app/
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    #entrypoint: "entrypoint.sh"
+    #entrypoint: ["python", "manage.py" ,"migrate", "DB"]
+    
+    #env_file:
+    #  - ./.env.dev
+    
+    ports:
+      - "8888:8080"
+      
+    depends_on:
+      - db
+      
+      
+  db:
+  
+    restart: always
+    
+    image: 'postgres:13.1-alpine'
+    container_name: db
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres 
+      
+    volumes:
+      - sample_db:/var/lib/postgresql/data
+      
+volumes:
+  sample_db:
+    
+
