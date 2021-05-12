@@ -4,23 +4,23 @@ package com.example.trpp_project.models;
 import com.example.trpp_project.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Data;
 
 import javax.persistence.*;
-import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Min;
+import java.util.List;
 
 @Entity
-@Table(name = "cards")
-public class Card {
-
+@javax.persistence.Table(name = "tables")
+@Data
+public class Table implements Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private long id;
+    private int id;
 
     @NotEmpty
     private String name;
-
 
     @Min(0)
     private int position;
@@ -32,16 +32,15 @@ public class Card {
     @JsonIgnore
     private long timestamp;
 
-    public Card() {
+    public Table() {
     }
 
-    public Card( String name, int numberOfList, int pos) {
+    public Table( String name,  int pos) {
         this.name = name;
         this.position = pos;
-
     }
     @JsonView(Views.get.class)
-    public long getId() {
+    public int getId() {
         return id;
     }
 
@@ -55,35 +54,14 @@ public class Card {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @JsonView(Views.get.class)
     public int getPosition() {
         return position;
     }
 
-    public void setPosition(int pos) {
-        this.position = pos;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
+    @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @JsonView(Views.internal.class)
+    private List<Card> cards;
 
     @Override
     public String toString() {
@@ -97,4 +75,7 @@ public class Card {
 
 
 
+     public Table clone() throws CloneNotSupportedException {
+        return (Table) super.clone();
+    }
 }

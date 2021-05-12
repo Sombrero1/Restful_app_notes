@@ -44,7 +44,6 @@ public class AuthController {
         user.setPassword(bCryptPasswordEncoder.encode(authenticationRequestDto.getPassword()));
         userRepository.save(user);
 
-
         return "OK";
     }
 }

@@ -3,18 +3,10 @@ package com.example.trpp_project.models;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.persistence.Table;
 import java.util.List;
 
-
-/**
- * Simple domain object that represents application user.
- *
- * @author Eugene Suleimanov
- * @version 1.0
- */
-
 @Entity
-//@Table(name = "users",uniqueConstraints={@UniqueConstraint(columnNames={"username"})})
 @Table(name = "users")
 @Data
 public class User {
@@ -29,8 +21,6 @@ public class User {
     private String password;
 
     @OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
-    private List<Card> cards;
-
-
+    private List<com.example.trpp_project.models.Table> tables;
 
 }
