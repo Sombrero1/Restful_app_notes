@@ -1,0 +1,301 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: 'http://localhost:8080'
+    description: Generated server url
+paths:
+  '/cards/{tableId}/{id}':
+    get:
+      tags:
+        - card-controller
+      operationId: getCard
+      parameters:
+        - name: tableId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Card'
+    put:
+      tags:
+        - card-controller
+      operationId: updateCard
+      parameters:
+        - name: tableId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Card'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: integer
+                format: int64
+    delete:
+      tags:
+        - card-controller
+      operationId: deleteCard
+      parameters:
+        - name: tableId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /register:
+    post:
+      tags:
+        - auth-controller
+      operationId: sign_up
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticationRequestDto'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /cards:
+    get:
+      tags:
+        - card-controller
+      operationId: getCards
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+    post:
+      tags:
+        - card-controller
+      operationId: createTable
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Table'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: integer
+                format: int64
+  '/cards/{tableId}':
+    post:
+      tags:
+        - card-controller
+      operationId: createCard
+      parameters:
+        - name: tableId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Card'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: integer
+                format: int64
+    delete:
+      tags:
+        - card-controller
+      operationId: deleteTable
+      parameters:
+        - name: tableId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /cards/sinch:
+    get:
+      tags:
+        - card-controller
+      operationId: getNewCards
+      parameters:
+        - name: timestamp
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Table'
+components:
+  schemas:
+    Card:
+      required:
+        - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        position:
+          minimum: 0
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+            - CREATED
+            - CHANGED
+            - DELETED
+    AuthenticationRequestDto:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    Table:
+      required:
+        - name
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+        position:
+          minimum: 0
+          type: integer
+          format: int32
+        status:
+          type: string
+          enum:
+            - CREATED
+            - CHANGED
+            - DELETED
+        cards:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card'
